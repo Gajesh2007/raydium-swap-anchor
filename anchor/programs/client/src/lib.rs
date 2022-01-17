@@ -109,6 +109,69 @@ pub fn deposit<'a, 'b, 'c, 'info>(
     )
 }
 
+/// Creates an 'deposit' instruction.
+pub fn withdraw<'a, 'b, 'c, 'info>(
+    ctx: CpiContext<'a, 'b, 'c, 'info, Withdraw<'info>>,
+    referrer_pc_account: Option<&Pubkey>,
+    serum_event_q: Option<&Pubkey>,
+    serum_bids: Option<&Pubkey>,
+    serum_asks: Option<&Pubkey>,
+    amount: u64,
+) -> ProgramResult {
+    let ix = amm_instruction::withdraw(
+        ctx.accounts.program.key,
+        ctx.accounts.amm_id.key,
+        ctx.accounts.amm_authority.key,
+        ctx.accounts.amm_open_orders.key,
+        ctx.accounts.amm_target_orders.key,
+        ctx.accounts.lp_mint_address.key,
+        ctx.accounts.pool_coin_token_account.key,
+        ctx.accounts.pool_pc_token_account.key,
+        ctx.accounts.pool_withdraw_queue.key,
+        ctx.accounts.pool_temp_lp_token_account.key,
+        ctx.accounts.serum_program_id.key,
+        ctx.accounts.serum_market.key,
+        ctx.accounts.serum_coin_vault_account.key,
+        ctx.accounts.serum_pc_vault_account.key,
+        ctx.accounts.serum_vault_signer.key,
+        ctx.accounts.user_lp_token_account.key,
+        ctx.accounts.user_coin_token_account.key,
+        ctx.accounts.user_pc_token_account.key,
+        ctx.accounts.user_owner.key,
+        referrer_pc_account,
+        serum_event_q,
+        serum_bids,
+        serum_asks,
+        amount,
+    )?;
+    solana_program::program::invoke_signed(
+        &ix,
+        &[
+            ctx.program,
+            ctx.accounts.amm_id,
+            ctx.accounts.amm_authority,
+            ctx.accounts.amm_open_orders,
+            ctx.accounts.amm_target_orders,
+            ctx.accounts.lp_mint_address,
+            ctx.accounts.pool_coin_token_account,
+            ctx.accounts.pool_pc_token_account,
+            ctx.accounts.pool_withdraw_queue,
+            ctx.accounts.pool_temp_lp_token_account,
+            ctx.accounts.serum_program_id,
+            ctx.accounts.serum_market,
+            ctx.accounts.serum_coin_vault_account,
+            ctx.accounts.serum_pc_vault_account,
+            ctx.accounts.serum_vault_signer,
+            ctx.accounts.user_lp_token_account,
+            ctx.accounts.user_coin_token_account,
+            ctx.accounts.user_pc_token_account,
+            ctx.accounts.user_owner,
+        ],
+        ctx.signer_seeds,
+    )
+}
+
+
 // --------------------------------
 // Instructions
 // --------------------------------
@@ -150,5 +213,29 @@ pub struct Deposit<'info> {
     user_coin_token_account: AccountInfo<'info>,
     user_pc_token_account: AccountInfo<'info>,
     user_lp_token_account: AccountInfo<'info>,
+    user_owner: AccountInfo<'info>,
+}
+
+/// Accounts for an [withdraw] instruction.
+#[derive(Accounts)]
+pub struct Withdraw<'info> {
+    program: AccountInfo<'info>,
+    amm_id: AccountInfo<'info>,
+    amm_authority: AccountInfo<'info>,
+    amm_open_orders: AccountInfo<'info>,
+    amm_target_orders: AccountInfo<'info>,
+    lp_mint_address: AccountInfo<'info>,
+    pool_coin_token_account: AccountInfo<'info>,
+    pool_pc_token_account: AccountInfo<'info>,
+    pool_withdraw_queue: AccountInfo<'info>,
+    pool_temp_lp_token_account: AccountInfo<'info>,
+    serum_program_id: AccountInfo<'info>,
+    serum_market: AccountInfo<'info>,
+    serum_coin_vault_account: AccountInfo<'info>,
+    serum_pc_vault_account: AccountInfo<'info>,
+    serum_vault_signer: AccountInfo<'info>,
+    user_lp_token_account: AccountInfo<'info>,
+    user_coin_token_account: AccountInfo<'info>,
+    user_pc_token_account: AccountInfo<'info>,
     user_owner: AccountInfo<'info>,
 }

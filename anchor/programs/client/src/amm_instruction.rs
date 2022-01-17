@@ -488,8 +488,8 @@ pub fn withdraw(
     serum_pc_vault_account: &Pubkey,
     serum_vault_signer: &Pubkey,
     user_lp_token_account: &Pubkey,
-    uer_coin_token_account: &Pubkey,
-    uer_pc_token_account: &Pubkey,
+    user_coin_token_account: &Pubkey,
+    user_pc_token_account: &Pubkey,
     user_owner: &Pubkey,
 
     referrer_pc_account: Option<&Pubkey>,
@@ -522,8 +522,8 @@ pub fn withdraw(
         AccountMeta::new_readonly(*serum_vault_signer, false),
         // user
         AccountMeta::new(*user_lp_token_account, false),
-        AccountMeta::new(*uer_coin_token_account, false),
-        AccountMeta::new(*uer_pc_token_account, false),
+        AccountMeta::new(*user_coin_token_account, false),
+        AccountMeta::new(*user_pc_token_account, false),
         AccountMeta::new_readonly(*user_owner, true),
     ];
 
